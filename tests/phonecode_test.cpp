@@ -211,3 +211,75 @@ TEST(libphonecode, phone_number_22_with_dictionary_a_ab_returns_result_of_a_a_an
     EXPECT_STREQ("a a", output.encodings[0]);
     EXPECT_STREQ("ab", output.encodings[1]);
 }
+
+TEST(libphonecode, phone_number_23456789_with_word_adgjmptw_has_one_match) {
+    const char *words[] = {"adgjmptw"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("23456789", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("adgjmptw", output.encodings[0]);
+}
+
+TEST(libphonecode, phone_number_23456789_with_word_behknqux_has_one_match) {
+    const char *words[] = {"behknqux"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("23456789", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("behknqux", output.encodings[0]);
+}
+
+TEST(libphonecode, phone_number_23456789_with_word_cfilorvy_has_one_match) {
+    const char *words[] = {"cfilorvy"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("23456789", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("cfilorvy", output.encodings[0]);
+}
+
+TEST(libphonecode, phone_number_79_with_word_sz_has_one_match) {
+    const char *words[] = {"sz"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("79", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("sz", output.encodings[0]);
+}

@@ -13,10 +13,45 @@ int number_matches_encoding(const char *number, const char *word) {
         switch (word[i]) {
             case 'a':
             case 'b':
+            case 'c':
                 encoded_digit = '2';
                 break;
             case 'd':
+            case 'e':
+            case 'f':
                 encoded_digit = '3';
+                break;
+            case 'g':
+            case 'h':
+            case 'i':
+                encoded_digit = '4';
+                break;
+            case 'j':
+            case 'k':
+            case 'l':
+                encoded_digit = '5';
+                break;
+            case 'm':
+            case 'n':
+            case 'o':
+                encoded_digit = '6';
+                break;
+            case 'p':
+            case 'q':
+            case 'r':
+            case 's':
+                encoded_digit = '7';
+                break;
+            case 't':
+            case 'u':
+            case 'v':
+                encoded_digit = '8';
+                break;
+            case 'w':
+            case 'x':
+            case 'y':
+            case 'z':
+                encoded_digit = '9';
                 break;
         }
         encoding[i] = encoded_digit;
