@@ -97,9 +97,10 @@ unsigned int max(unsigned int x, unsigned int y) {
 }
 
 
-
-void
-duplicate_ith_of_n_encodings_m_times(struct phone_encodings_t *acc, unsigned int i, unsigned int n, unsigned int m) {
+void duplicate_ith_of_n_encodings_m_times(struct phone_encodings_t *acc,
+                                          unsigned int i,
+                                          unsigned int n,
+                                          unsigned int m) {
     for (unsigned int j = 1; j < m; j++) {
         unsigned int acc_index = i + j * n;
         replace_and_free_str(&acc->encodings[acc_index], acc->encodings[i]);
