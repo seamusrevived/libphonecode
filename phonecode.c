@@ -92,14 +92,16 @@ void process_subsequence(struct phone_encodings_t *total, const char *phone_numb
 
         unsigned int tail_length = phone_number_length - i - 1;
         char *tail_sequence = malloc(sizeof(char) * (tail_length + 1));
-        strncpy(tail_sequence, &phone_number[i], tail_length);
+        strncpy(tail_sequence, &phone_number[i+1], tail_length);
         tail_sequence[tail_length] = '\0';
 
         struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(phone_subsequence, dictionary);
-        merge_encodings(this_branch, found_words);
-        process_subsequence(this_branch, tail_sequence, dictionary);
+        if (found_words->length > 0) {
+            merge_encodings(this_branch, found_words);
+            process_subsequence(this_branch, tail_sequence, dictionary);
+            add_encodings(all_branch_encodings, this_branch);
+        }
 
-        add_encodings(all_branch_encodings, this_branch);
     }
     copy_phone_encodings(total, all_branch_encodings);
 }

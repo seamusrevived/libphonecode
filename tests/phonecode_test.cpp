@@ -283,3 +283,21 @@ TEST(libphonecode, phone_number_79_with_word_sz_has_one_match) {
     EXPECT_EQ(1, output.length);
     EXPECT_STREQ("sz", output.encodings[0]);
 }
+
+TEST(libphonecode, phone_number_2323_with_word_ad_has_one_match_ad_ad) {
+    const char *words[] = {"ad"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("2323", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("ad ad", output.encodings[0]);
+}
