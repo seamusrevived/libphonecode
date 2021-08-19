@@ -174,3 +174,21 @@ TEST(libphonecode, phone_number_22_with_dictionary_a_b_returns_4_result_of_a_b_c
     EXPECT_STREQ("a b", output.encodings[2]);
     EXPECT_STREQ("b b", output.encodings[3]);
 }
+
+TEST(libphonecode, phone_number_22_with_dictionary_ab_returns_result_of_ab) {
+    const char *words[] = {"ab"};
+    struct dict_t dict{
+        .size = 2,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("22", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("ab", output.encodings[0]);
+}
