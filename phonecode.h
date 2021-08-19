@@ -12,7 +12,7 @@ struct phone_encodings_t {
     char **encodings;
 };
 
-void find_encodings(const char *phone_number, struct dict_t *dictionary, struct phone_encodings_t *output_encodings);
+void find_encodings(const char *phone_number, const struct dict_t *dictionary, struct phone_encodings_t *output_encodings);
 
 
 #endif //LIBPHONECODE_PHONECODE_H
