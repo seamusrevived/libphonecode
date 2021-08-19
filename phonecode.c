@@ -10,6 +10,6 @@ void find_encodings(const char *phone_number,
     output_encodings->length = dictionary->size;
 
     if(dictionary->size > 0){
-        strcpy(output_encodings->encodings[0], "a");
+        strcpy(output_encodings->encodings[0], dictionary->words[0]);
     }
 }
