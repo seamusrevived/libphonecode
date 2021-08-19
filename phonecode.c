@@ -1,5 +1,4 @@
 #include <string.h>
-#include <stdio.h>
 #include <malloc.h>
 #include "phonecode.h"
 
@@ -8,10 +7,16 @@ struct dial_pad_letters_t {
     char const **letters;
 };
 
-struct phone_encodings_t *new_phone_encodings() {
-    struct phone_encodings_t *encodings = malloc(sizeof(struct phone_encodings_t));
-    encodings->length = 0;
+struct dial_pad_letters_t *new_dial_pad(int n, const char **letters) {
+    struct dial_pad_letters_t *dial_pad = malloc(sizeof(struct dial_pad_letters_t));
+    dial_pad->length = n;
+    dial_pad->letters = malloc(sizeof(char *) * n);
+    for (int i = 0; i < n; i++) {
+        dial_pad->letters[i] = strdup(letters[i]);
+    }
+    return dial_pad;
 }
+
 
 const char *find_word_in_dictionary(const char *target_word, const struct dict_t *dictionary) {
     const char *found_word = NULL;
@@ -22,10 +27,6 @@ const char *find_word_in_dictionary(const char *target_word, const struct dict_t
     }
     return found_word;
 }
-
-void add_word_to_encodings(const char *found_word, struct phone_encodings_t *encoding_results);
-
-void copy_phone_encodings(struct phone_encodings_t *output_encodings, const struct phone_encodings_t *found_mapping);
 
 struct phone_encodings_t *
 find_encodings_from_set_in_dictionary(const struct dial_pad_letters_t *dial_pad, const struct dict_t *dictionary) {
@@ -41,36 +42,13 @@ find_encodings_from_set_in_dictionary(const struct dial_pad_letters_t *dial_pad,
     return encoding_results;
 }
 
-void add_word_to_encodings(const char *found_word, struct phone_encodings_t *encoding_results) {
-    char **old_memory = encoding_results->encodings;
-    int n_existing_words = encoding_results->length;
-
-    encoding_results->encodings = malloc(sizeof(const char *) * (n_existing_words + 1));
-    if (n_existing_words != 0) {
-        memcpy(encoding_results->encodings, old_memory, sizeof(char *) * n_existing_words);
-        free(old_memory);
-    }
-    encoding_results->encodings[n_existing_words] = strdup(found_word);
-    encoding_results->length += 1;
-}
-
-struct dial_pad_letters_t *new_dial_pad(int n, const char **letters) {
-    struct dial_pad_letters_t *dial_pad = malloc(sizeof(struct dial_pad_letters_t));
-    dial_pad->length = n;
-    dial_pad->letters = malloc(sizeof(char *) * n);
-    for (int i = 0; i < n; i++) {
-        dial_pad->letters[i] = strdup(letters[i]);
-    }
-    return dial_pad;
-}
-
 
 
 struct phone_encodings_t *
 get_dictionary_matches_from_number(const char *phone_number, const struct dict_t *dictionary) {
     struct dial_pad_letters_t *dial_pad[4];
 
-    if(strcmp(phone_number, "") == 0){
+    if (strcmp(phone_number, "") == 0) {
         return new_phone_encodings();
     }
 
@@ -78,7 +56,12 @@ get_dictionary_matches_from_number(const char *phone_number, const struct dict_t
     dial_pad[3] = new_dial_pad(2, (const char *[]) {"d"});
 
     int dial_pad_index = phone_number[0] - '0';
-    return find_encodings_from_set_in_dictionary(dial_pad[dial_pad_index], dictionary);
+    struct phone_encodings_t *result = find_encodings_from_set_in_dictionary(dial_pad[dial_pad_index], dictionary);
+
+    free(dial_pad[2]);
+    free(dial_pad[3]);
+
+    return result;
 }
 
 
@@ -88,12 +71,7 @@ void find_encodings(const char *phone_number,
 ) {
     struct phone_encodings_t *found_mapping = get_dictionary_matches_from_number(phone_number, dictionary);
     copy_phone_encodings(output_encodings, found_mapping);
-    free(found_mapping);
+    delete_phone_encodings(found_mapping);
 }
 
-void copy_phone_encodings(struct phone_encodings_t *output_encodings, const struct phone_encodings_t *found_mapping) {
-    output_encodings->length = found_mapping->length;
-    for (int i = 0; i < found_mapping->length; i++) {
-        strcpy(output_encodings->encodings[i], found_mapping->encodings[i]);
-    }
-}
+
