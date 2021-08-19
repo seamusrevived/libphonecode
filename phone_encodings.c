@@ -11,7 +11,7 @@ void resize_encodings(struct phone_encodings_t *dst, unsigned int new_size);
 
 void delete_phone_encodings(struct phone_encodings_t *phone_encodings) {
     if (phone_encodings->length > 0) {
-        for (int i = 0; i < phone_encodings->length; i++) {
+        for (unsigned int i = 0; i < phone_encodings->length; i++) {
             free(phone_encodings->encodings[i]);
         }
         free(phone_encodings->encodings);
@@ -23,7 +23,7 @@ void delete_phone_encodings(struct phone_encodings_t *phone_encodings) {
 void copy_phone_encodings(struct phone_encodings_t *dst, const struct phone_encodings_t *src) {
     resize_encodings(dst, src->length);
 
-    for (int i = 0; i < src->length; i++) {
+    for (unsigned int i = 0; i < src->length; i++) {
         free(dst->encodings[i]);
         dst->encodings[i] = strdup(src->encodings[i]);
     }
@@ -37,7 +37,7 @@ void grow_encodings(struct phone_encodings_t *dst, unsigned int new_size) {
         dst->encodings[i] = malloc(sizeof(char));
         dst->encodings[i][0] = '\0';
     }
-    if(dst->length > 0){
+    if (dst->length > 0) {
         free(old_encodings);
     }
     dst->length = new_size;
@@ -59,7 +59,7 @@ void resize_encodings(struct phone_encodings_t *dst, unsigned int new_size) {
 }
 
 void unchecked_copy_phone_encodings(struct phone_encodings_t *dst, const struct phone_encodings_t *src) {
-    for (int i = 0; i < src->length; i++) {
+    for (unsigned int i = 0; i < src->length; i++) {
         strcpy(dst->encodings[i], src->encodings[i]);
     }
     dst->length = src->length;
@@ -68,7 +68,7 @@ void unchecked_copy_phone_encodings(struct phone_encodings_t *dst, const struct 
 
 void add_word_to_encodings(const char *found_word, struct phone_encodings_t *encoding_results) {
     char **old_memory = encoding_results->encodings;
-    int n_existing_words = encoding_results->length;
+    unsigned int n_existing_words = encoding_results->length;
 
     encoding_results->encodings = malloc(sizeof(const char *) * (n_existing_words + 1));
     if (n_existing_words != 0) {
@@ -79,6 +79,32 @@ void add_word_to_encodings(const char *found_word, struct phone_encodings_t *enc
     encoding_results->length += 1;
 }
 
+void merge_encoding(char **acc, const char *enc) {
+    unsigned int dst_len = 0;
+    dst_len = strlen(*acc);
+
+    unsigned int src_len = 0;
+    src_len = strlen(enc);
+
+    char *new_encoding = malloc(sizeof(char *) * (dst_len + src_len + 1));
+    new_encoding[0] = '\0';
+    if (dst_len > 0) {
+        strcpy(new_encoding, *acc);
+        strcat(new_encoding, " ");
+    }
+    strcat(new_encoding, enc);
+
+    char *old_encoding = *acc;
+    *acc = new_encoding;
+    free(old_encoding);
+}
+
 void merge_encodings(struct phone_encodings_t *acc, const struct phone_encodings_t *enc) {
-    copy_phone_encodings(acc, enc);
+    if (acc->length < enc->length) {
+        resize_encodings(acc, enc->length);
+    }
+
+    for (unsigned int i = 0; i < enc->length; i++) {
+        merge_encoding(&acc->encodings[i], enc->encodings[i]);
+    }
 }

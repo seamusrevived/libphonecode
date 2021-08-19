@@ -14,7 +14,7 @@ TEST(libphonecode, empty_phone_number_no_dictionary_returns_0_results) {
     };
 
     struct phone_encodings_t output{
-            .length = -1,
+            .length = 0,
             .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
@@ -33,7 +33,7 @@ TEST(libphonecode, phone_number_2_with_dictionary_a_returns_1_result_a) {
     };
 
     struct phone_encodings_t output{
-            .length = -1,
+            .length = 0,
             .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
@@ -48,13 +48,13 @@ TEST(libphonecode, phone_number_2_with_dictionary_b_returns_1_result_b) {
     const char *expected_result = "b";
     const char *words[] = {expected_result};
     struct dict_t dict{
-        .size = 1,
-        .words = words
+            .size = 1,
+            .words = words
     };
 
     struct phone_encodings_t output{
-        .length = -1,
-        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+            .length = 0,
+            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     find_encodings("2", &dict, &output);
@@ -67,13 +67,13 @@ TEST(libphonecode, phone_number_2_with_dictionary_b_returns_1_result_b) {
 TEST(libphonecode, phone_number_2_with_dictionary_d_returns_0_results) {
     const char *words[] = {"d"};
     struct dict_t dict{
-        .size = 1,
-        .words = words
+            .size = 1,
+            .words = words
     };
 
     struct phone_encodings_t output{
-        .length = -1,
-        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+            .length = 0,
+            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     find_encodings("2", &dict, &output);
@@ -84,13 +84,13 @@ TEST(libphonecode, phone_number_2_with_dictionary_d_returns_0_results) {
 TEST(libphonecode, phone_number_3_with_dictionary_d_returns_1_result_of_d) {
     const char *words[] = {"d"};
     struct dict_t dict{
-        .size = 1,
-        .words = words
+            .size = 1,
+            .words = words
     };
 
     struct phone_encodings_t output{
-        .length = -1,
-        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+            .length = 0,
+            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     find_encodings("3", &dict, &output);
@@ -102,13 +102,13 @@ TEST(libphonecode, phone_number_3_with_dictionary_d_returns_1_result_of_d) {
 TEST(libphonecode, phone_number_2_with_dictionary_d_a_returns_1_result_of_a) {
     const char *words[] = {"d", "a"};
     struct dict_t dict{
-        .size = 2,
-        .words = words
+            .size = 2,
+            .words = words
     };
 
     struct phone_encodings_t output{
-        .length = -1,
-        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+            .length = 0,
+            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     find_encodings("2", &dict, &output);
@@ -120,13 +120,13 @@ TEST(libphonecode, phone_number_2_with_dictionary_d_a_returns_1_result_of_a) {
 TEST(libphonecode, phone_number_2_with_dictionary_a_b_returns_2_results_of_a_and_b) {
     const char *words[] = {"a", "b"};
     struct dict_t dict{
-        .size = 2,
-        .words = words
+            .size = 2,
+            .words = words
     };
 
     struct phone_encodings_t output{
-        .length = -1,
-        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+            .length = 0,
+            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     find_encodings("2", &dict, &output);
@@ -134,4 +134,22 @@ TEST(libphonecode, phone_number_2_with_dictionary_a_b_returns_2_results_of_a_and
     EXPECT_EQ(2, output.length);
     EXPECT_STREQ("a", output.encodings[0]);
     EXPECT_STREQ("b", output.encodings[1]);
+}
+
+TEST(libphonecode, phone_number_22_with_dictionary_a_returns_1_result_of_a_a) {
+    const char *words[] = {"a"};
+    struct dict_t dict{
+            .size = 1,
+            .words = words
+    };
+
+    struct phone_encodings_t output{
+            .length = MAX_OUTPUT_LENGTH,
+            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("22", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("a a", output.encodings[0]);
 }
