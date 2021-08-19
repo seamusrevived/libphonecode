@@ -5,7 +5,7 @@
 #include "phone_encodings.h"
 
 struct dict_t {
-    int size;
+    unsigned int size;
     char const **words;
 };
 
