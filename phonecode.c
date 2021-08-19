@@ -43,7 +43,13 @@ void process_subsequence(struct phone_encodings_t *total, const char *phone_numb
 
     unsigned int phone_number_length = strlen(phone_number);
 
+    struct phone_encodings_t *all_branch_encodings = new_phone_encodings();
+
     for (unsigned int i = 0; i < phone_number_length; i++) {
+        struct phone_encodings_t *this_branch = new_phone_encodings();
+
+        copy_phone_encodings(this_branch, total);
+
         unsigned int head_length = i + 1;
         char *phone_subsequence = malloc(sizeof(char) * (head_length + 1));
         strncpy(phone_subsequence, phone_number, head_length);
@@ -55,9 +61,12 @@ void process_subsequence(struct phone_encodings_t *total, const char *phone_numb
         tail_sequence[tail_length] = '\0';
 
         struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(phone_subsequence, dictionary);
-        merge_encodings(total, found_words);
-        process_subsequence(total, tail_sequence, dictionary);
+        merge_encodings(this_branch, found_words);
+        process_subsequence(this_branch, tail_sequence, dictionary);
+
+        add_encodings(all_branch_encodings, this_branch);
     }
+    copy_phone_encodings(total, all_branch_encodings);
 }
 
 struct phone_encodings_t *
@@ -74,7 +83,7 @@ void find_encodings(const char *phone_number,
                     struct phone_encodings_t *output_encodings
 ) {
     struct phone_encodings_t *found_mapping = get_encodings_for_number_with_dictionary(phone_number, dictionary);
-    copy_phone_encodings(output_encodings, found_mapping);
+    raw_copy_phone_encodings(output_encodings, found_mapping);
     delete_phone_encodings(found_mapping);
 }
 
