@@ -2,6 +2,12 @@
 #include <string.h>
 #include "phone_encodings.h"
 
+void replace_and_free_str(char **dst, const char *src) {
+    char *old_memory = *dst;
+    *dst = strdup(src);
+    free(old_memory);
+}
+
 struct phone_encodings_t *new_phone_encodings() {
     struct phone_encodings_t *encodings = malloc(sizeof(struct phone_encodings_t));
     encodings->length = 0;
@@ -17,16 +23,6 @@ void delete_phone_encodings(struct phone_encodings_t *phone_encodings) {
         free(phone_encodings->encodings);
     }
     free(phone_encodings);
-}
-
-
-void copy_phone_encodings(struct phone_encodings_t *dst, const struct phone_encodings_t *src) {
-    resize_encodings(dst, src->length);
-
-    for (unsigned int i = 0; i < src->length; i++) {
-        free(dst->encodings[i]);
-        dst->encodings[i] = strdup(src->encodings[i]);
-    }
 }
 
 void grow_encodings(struct phone_encodings_t *dst, unsigned int new_size) {
@@ -58,13 +54,12 @@ void resize_encodings(struct phone_encodings_t *dst, unsigned int new_size) {
     }
 }
 
-void unchecked_copy_phone_encodings(struct phone_encodings_t *dst, const struct phone_encodings_t *src) {
+void copy_phone_encodings(struct phone_encodings_t *dst, const struct phone_encodings_t *src) {
     for (unsigned int i = 0; i < src->length; i++) {
         strcpy(dst->encodings[i], src->encodings[i]);
     }
     dst->length = src->length;
 }
-
 
 void add_word_to_encodings(const char *found_word, struct phone_encodings_t *encoding_results) {
     char **old_memory = encoding_results->encodings;
@@ -79,32 +74,67 @@ void add_word_to_encodings(const char *found_word, struct phone_encodings_t *enc
     encoding_results->length += 1;
 }
 
-void merge_encoding(char **acc, const char *enc) {
-    unsigned int dst_len = 0;
-    dst_len = strlen(*acc);
+void append_encoding(char **acc_encoding, const char *encoding_to_append) {
+    unsigned int dst_len = strlen(*acc_encoding);
+    unsigned int src_len = strlen(encoding_to_append);
 
-    unsigned int src_len = 0;
-    src_len = strlen(enc);
-
-    char *new_encoding = malloc(sizeof(char *) * (dst_len + src_len + 1));
+    char *new_encoding = malloc(sizeof(char) * (dst_len + src_len + 1));
     new_encoding[0] = '\0';
     if (dst_len > 0) {
-        strcpy(new_encoding, *acc);
+        strcpy(new_encoding, *acc_encoding);
         strcat(new_encoding, " ");
     }
-    strcat(new_encoding, enc);
+    strcat(new_encoding, encoding_to_append);
 
-    char *old_encoding = *acc;
-    *acc = new_encoding;
-    free(old_encoding);
+    replace_and_free_str(acc_encoding, new_encoding);
+}
+
+unsigned int max(unsigned int x, unsigned int y) {
+    if (x > y) {
+        return x;
+    }
+    return y;
+}
+
+
+
+void
+duplicate_ith_of_n_encodings_m_times(struct phone_encodings_t *acc, unsigned int i, unsigned int n, unsigned int m) {
+    for (unsigned int j = 1; j < m; j++) {
+        unsigned int acc_index = i + j * n;
+        replace_and_free_str(&acc->encodings[acc_index], acc->encodings[i]);
+    }
+}
+
+void duplicate_n_encodings_m_times(struct phone_encodings_t *acc,
+                                   unsigned int n,
+                                   unsigned int m) {
+    for (unsigned int i = 0; i < n; i++) {
+        duplicate_ith_of_n_encodings_m_times(acc, i, n, m);
+    }
+}
+
+void cross_append_ith_of_n_encodings(const struct phone_encodings_t *acc,
+                                     unsigned int i,
+                                     unsigned int n_initial_acc_encodings,
+                                     const struct phone_encodings_t *enc) {
+    for (unsigned int j = 0; j < enc->length; j++) {
+        unsigned int acc_index = i + j * n_initial_acc_encodings;
+        append_encoding(&acc->encodings[acc_index], enc->encodings[j]);
+    }
 }
 
 void merge_encodings(struct phone_encodings_t *acc, const struct phone_encodings_t *enc) {
-    if (acc->length < enc->length) {
-        resize_encodings(acc, enc->length);
+    unsigned int n_initial_acc_encodings = max(1, acc->length);
+    unsigned int n_encodings_to_cross_append = enc->length;
+    unsigned int minimum_new_accumulator_size = n_initial_acc_encodings * n_encodings_to_cross_append;
+    if (acc->length < minimum_new_accumulator_size) {
+        resize_encodings(acc, minimum_new_accumulator_size);
     }
 
-    for (unsigned int i = 0; i < enc->length; i++) {
-        merge_encoding(&acc->encodings[i], enc->encodings[i]);
+    duplicate_n_encodings_m_times(acc, n_initial_acc_encodings, n_encodings_to_cross_append);
+
+    for (unsigned int i = 0; i < n_initial_acc_encodings; i++) {
+        cross_append_ith_of_n_encodings(acc, i, n_initial_acc_encodings, enc);
     }
 }

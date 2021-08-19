@@ -73,7 +73,7 @@ void find_encodings(const char *phone_number,
                     struct phone_encodings_t *output_encodings
 ) {
     struct phone_encodings_t *found_mapping = get_dictionary_matches_from_number(phone_number, dictionary);
-    unchecked_copy_phone_encodings(output_encodings, found_mapping);
+    copy_phone_encodings(output_encodings, found_mapping);
     delete_phone_encodings(found_mapping);
 }
 
