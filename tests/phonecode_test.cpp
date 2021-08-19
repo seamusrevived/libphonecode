@@ -63,3 +63,20 @@ TEST(libphonecode, phone_number_2_with_dictionary_b_returns_1_result_b) {
     EXPECT_STREQ(expected_result, output.encodings[0]);
 }
 
+
+TEST(libphonecode, phone_number_2_with_dictionary_d_returns_0_results) {
+    const char *words[] = {"d"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = -1,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("2", &dict, &output);
+
+    EXPECT_EQ(0, output.length);
+}
