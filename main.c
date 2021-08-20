@@ -16,6 +16,13 @@ char **initialize_strings_buffer(int max_output_length, int max_string_length) {
     return output;
 }
 
+void free_strings_buffer(char ** buffer, int max_output_length) {
+    for (int i = 0; i < max_output_length; i++) {
+        free(buffer[i]);
+    }
+    free(buffer);
+}
+
 int main(int argc, char **argv) {
 
     int n_phone_numbers = 4;
@@ -41,5 +48,6 @@ int main(int argc, char **argv) {
         }
     }
 
+    free_strings_buffer(output.strings, MAX_OUTPUT_LENGTH);
     return 0;
 }

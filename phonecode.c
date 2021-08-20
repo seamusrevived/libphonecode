@@ -64,12 +64,15 @@ void __build_encodings_for_sequence(
             __build_encodings_for_sequence(partitioning_results, tail_sequence, dictionary);
             concat_string_collections(all_partitioning_results, partitioning_results);
         }
+        delete_string_collection(found_words);
+        delete_string_collection(partitioning_results);
 
-        free(head_sequence);
         free(tail_sequence);
+        free(head_sequence);
     }
 
     copy_string_collection(running_result, all_partitioning_results);
+    delete_string_collection(all_partitioning_results);
 }
 
 string_collection_t *__find_words_matching_number_in_dictionary(
@@ -92,5 +95,7 @@ bool __number_matches_encoding(const char *number, const char *word) {
         encoding[i] = get_encoded_digit(word[i]);
     }
 
-    return strcmp(number, encoding) == 0;
+    bool result = strcmp(number, encoding) == 0;
+    free(encoding);
+    return result;
 }

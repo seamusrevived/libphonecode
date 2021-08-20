@@ -5,9 +5,9 @@
 
 void __replace_and_free_str(char **, const char *);
 
-void __grow_string_collection(string_collection_t *dst, size_t new_size);
+void __grow_string_collection(string_collection_t *, size_t);
 
-void __shrink_string_collection(string_collection_t *dst, size_t new_size);
+void __shrink_string_collection(string_collection_t *, size_t);
 
 void __join_strings(char **, const char *);
 
@@ -61,30 +61,33 @@ void resize_string_collection(
 }
 
 void __grow_string_collection(
-        string_collection_t *dst,
+        string_collection_t *coll,
         size_t new_size
 ) {
-    char **old_strings = dst->strings;
-    dst->strings = malloc(sizeof(char *) * new_size);
-    memcpy(dst->strings, old_strings, sizeof(char *) * dst->size);
-    for (unsigned int i = dst->size; i < new_size; i++) {
-        dst->strings[i] = malloc(sizeof(char));
-        dst->strings[i][0] = '\0';
+    char **old_strings = coll->strings;
+    coll->strings = malloc(sizeof(char *) * new_size);
+    memcpy(coll->strings, old_strings, sizeof(char *) * coll->size);
+    for (unsigned int i = coll->size; i < new_size; i++) {
+        coll->strings[i] = malloc(sizeof(char));
+        coll->strings[i][0] = '\0';
     }
-    if (dst->size > 0) {
+    if (coll->size > 0) {
         free(old_strings);
     }
-    dst->size = new_size;
+    coll->size = new_size;
 }
 
 void __shrink_string_collection(
-        string_collection_t *dst,
+        string_collection_t *coll,
         size_t new_size
 ) {
-    for (unsigned int i = new_size; i < dst->size; i++) {
-        free(dst->strings[i]);
+    for (unsigned int i = new_size; i < coll->size; i++) {
+        free(coll->strings[i]);
     }
-    dst->size = new_size;
+    if (new_size == 0 && coll->size != 0) {
+        free(coll->strings);
+    }
+    coll->size = new_size;
 }
 
 
@@ -155,15 +158,18 @@ void __join_strings(char **dst, const char *string) {
     unsigned int dst_len = strlen(*dst);
     unsigned int src_len = strlen(string);
 
-    char *joined_string = malloc(sizeof(char) * (dst_len + src_len + 2));
-    joined_string[0] = '\0';
-    if (dst_len > 0) {
-        strcpy(joined_string, *dst);
-        strcat(joined_string, " ");
+    if (dst_len == 0) {
+        __replace_and_free_str(dst, string);
+        return;
     }
+
+    char *joined_string = malloc(sizeof(char) * (dst_len + src_len + 2));
+    strcpy(joined_string, *dst);
+    strcat(joined_string, " ");
     strcat(joined_string, string);
 
     __replace_and_free_str(dst, joined_string);
+    free(joined_string);
 }
 
 void cross_merge_strings(
@@ -174,9 +180,7 @@ void cross_merge_strings(
     unsigned int coll_size = coll->size;
     unsigned int min_acc_size = initial_acc_size * coll_size;
 
-    if (acc->size < min_acc_size) {
-        resize_string_collection(acc, min_acc_size);
-    }
+    resize_string_collection(acc, min_acc_size);
 
     duplicate_n_strings_m_times(acc, initial_acc_size, coll_size);
 
