@@ -1,6 +1,5 @@
 #include <string.h>
 #include <malloc.h>
-#include <regex.h>
 #include "phonecode.h"
 
 
@@ -117,23 +116,16 @@ get_encodings_for_number_with_dictionary(const char *phone_number, const struct 
 }
 
 char *get_sanitized_phone_number(const char *phone_number) {
-    regex_t regex;
-    regcomp(&regex, "[2-9]", 0);
-    regmatch_t matches[1];
-
-    int sanitized_length = 0;
+    int length = 0;
     char *sanitized_phone_number = strdup(phone_number);
 
-    char const *remaining_phone_number = phone_number;
-
-    int result = regexec(&regex, remaining_phone_number, 1, matches, 0);
-    while(result != REG_NOMATCH && matches[0].rm_so != -1) {
-        sanitized_phone_number[sanitized_length] = remaining_phone_number[matches[0].rm_so];
-        sanitized_length++;
-        remaining_phone_number = &remaining_phone_number[matches[0].rm_eo];
-        result = regexec(&regex, remaining_phone_number, 1, matches, 0);
+    for(unsigned int i = 0; i < strlen(phone_number); i++){
+        if('2' <= phone_number[i] && phone_number[i] <= '9') {
+            sanitized_phone_number[length] = phone_number[i];
+            length++;
+        }
     }
-    sanitized_phone_number[sanitized_length] = '\0';
+    sanitized_phone_number[length] = '\0';
 
     return sanitized_phone_number;
 }
