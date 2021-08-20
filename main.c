@@ -18,8 +18,8 @@ char **initialize_strings_buffer(int max_output_length, int max_string_length) {
 
 int main(int argc, char **argv) {
 
-    int n_phone_numbers = 3;
-    const char *phone_numbers[] = {"(435) 569-6753", "(967) 534-3556", "222"};
+    int n_phone_numbers = 4;
+    const char *phone_numbers[] = {"(435) 569-6753", "(967) 534-3556", "222", "232"};
 
     const char *words[] = {"hello", "world", "a", "b", "ab", "ba", "aba"};
     struct dict_t dict = {
