@@ -1,7 +1,3 @@
-//
-// Created by seamus on 8/19/2021.
-//
-
 #ifndef LIBPHONECODE_UTILS_H
 #define LIBPHONECODE_UTILS_H
 

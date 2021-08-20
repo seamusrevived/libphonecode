@@ -72,7 +72,7 @@ find_words_matching_number_in_dictionary(const char *phone_number_sequence, cons
     return found_words;
 }
 
-char *create_substring(const char *string, int offset, unsigned int length) {
+char *create_substring(const char *string, size_t offset, size_t length) {
     char *substring = malloc(sizeof(char) * (length + 1));
     strncpy(substring, &string[offset], length);
     substring[length] = '\0';
@@ -89,7 +89,7 @@ void build_encodings_for_sequence(struct phone_encodings_t *running_result, cons
 
     struct phone_encodings_t *all_partitioning_results = new_phone_encodings();
 
-    for (unsigned int i = 0; i < phone_number_length; i++) {
+    for (size_t i = 0; i < phone_number_length; i++) {
         char *head_sequence = create_substring(phone_number, 0, i + 1);
         char *tail_sequence = create_substring(phone_number, i + 1, phone_number_length - i - 1);
 
@@ -97,7 +97,7 @@ void build_encodings_for_sequence(struct phone_encodings_t *running_result, cons
         copy_phone_encodings(partitioning_results, running_result);
 
         struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(head_sequence, dictionary);
-        if (found_words->length > 0) {
+        if (found_words->size > 0) {
             cross_merge_encodings(partitioning_results, found_words);
             build_encodings_for_sequence(partitioning_results, tail_sequence, dictionary);
             add_encodings(all_partitioning_results, partitioning_results);

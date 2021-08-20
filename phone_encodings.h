@@ -2,7 +2,7 @@
 #define LIBPHONECODE_PHONE_ENCODINGS_H
 
 struct phone_encodings_t {
-    size_t length;
+    size_t size;
     char **encodings;
 };
 

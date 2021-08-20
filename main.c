@@ -28,14 +28,14 @@ int main(int argc, char **argv) {
     };
 
     struct phone_encodings_t output = {
-            .length = MAX_OUTPUT_LENGTH,
+            .size = MAX_OUTPUT_LENGTH,
             .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     for (int i = 0; i < n_phone_numbers; i++) {
         printf("Phone Number: %s\n", phone_numbers[i]);
         find_encodings(phone_numbers[i], &dict, &output);
-        for (unsigned int j = 0; j < output.length; j++) {
+        for (size_t j = 0; j < output.size; j++) {
             printf("\t%s\n", output.encodings[j]);
         }
     }
