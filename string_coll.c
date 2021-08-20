@@ -44,10 +44,8 @@ void copy_string_collection(
         const string_collection_t *src
 ) {
     resize_string_collection(dst, src->size);
-
     for (int i = 0; i < src->size; i++) {
-        free(dst->strings[i]);
-        dst->strings[i] = strdup(src->strings[i]);
+        __replace_and_free_str(&dst->strings[i], src->strings[i]);
     }
 }
 
