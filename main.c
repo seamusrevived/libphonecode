@@ -33,8 +33,9 @@ int main(int argc, char **argv) {
     };
 
     for (int i = 0; i < n_phone_numbers; i++) {
-        printf("Phone Number: %s\n", phone_numbers[i]);
+        printf("\nPhone Number: %s\n", phone_numbers[i]);
         find_encodings(phone_numbers[i], &dict, &output);
+        printf("%d result(s)\n", output.size);
         for (size_t j = 0; j < output.size; j++) {
             printf("\t%s\n", output.strings[j]);
         }
