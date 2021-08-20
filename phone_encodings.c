@@ -70,9 +70,6 @@ void copy_phone_encodings(struct phone_encodings_t *dst, const struct phone_enco
     }
 }
 
-
-
-
 void add_word_to_encodings(const char *found_word, struct phone_encodings_t *encoding_results) {
     char **old_memory = encoding_results->encodings;
     unsigned int n_existing_words = encoding_results->length;
@@ -96,9 +93,9 @@ void add_encodings(struct phone_encodings_t *dst, const struct phone_encodings_t
 }
 
 
-void append_encoding(char **acc_encoding, const char *encoding_to_append) {
+void append_string_with_word(char **acc_encoding, const char *word_to_append) {
     unsigned int dst_len = strlen(*acc_encoding);
-    unsigned int src_len = strlen(encoding_to_append);
+    unsigned int src_len = strlen(word_to_append);
 
     char *new_encoding = malloc(sizeof(char) * (dst_len + src_len + 1));
     new_encoding[0] = '\0';
@@ -106,7 +103,7 @@ void append_encoding(char **acc_encoding, const char *encoding_to_append) {
         strcpy(new_encoding, *acc_encoding);
         strcat(new_encoding, " ");
     }
-    strcat(new_encoding, encoding_to_append);
+    strcat(new_encoding, word_to_append);
 
     replace_and_free_str(acc_encoding, new_encoding);
 }
@@ -137,20 +134,21 @@ void duplicate_n_encodings_m_times(struct phone_encodings_t *acc,
     }
 }
 
-void cross_append_ith_of_n_encodings(const struct phone_encodings_t *acc,
-                                     unsigned int i,
-                                     unsigned int n_initial_acc_encodings,
-                                     const struct phone_encodings_t *enc) {
+void cross_append_ith_of_n_encodings_with_encodings(const struct phone_encodings_t *acc,
+                                                    unsigned int i,
+                                                    unsigned int n_initial_acc_encodings,
+                                                    const struct phone_encodings_t *enc) {
     for (unsigned int j = 0; j < enc->length; j++) {
         unsigned int acc_index = i + j * n_initial_acc_encodings;
-        append_encoding(&acc->encodings[acc_index], enc->encodings[j]);
+        append_string_with_word(&acc->encodings[acc_index], enc->encodings[j]);
     }
 }
 
-void merge_encodings(struct phone_encodings_t *acc, const struct phone_encodings_t *enc) {
+void cross_merge_encodings(struct phone_encodings_t *acc, const struct phone_encodings_t *enc) {
     unsigned int n_initial_acc_encodings = max(1, acc->length);
     unsigned int n_encodings_to_cross_append = enc->length;
     unsigned int minimum_new_accumulator_size = n_initial_acc_encodings * n_encodings_to_cross_append;
+
     if (acc->length < minimum_new_accumulator_size) {
         resize_encodings(acc, minimum_new_accumulator_size);
     }
@@ -158,6 +156,6 @@ void merge_encodings(struct phone_encodings_t *acc, const struct phone_encodings
     duplicate_n_encodings_m_times(acc, n_initial_acc_encodings, n_encodings_to_cross_append);
 
     for (unsigned int i = 0; i < n_initial_acc_encodings; i++) {
-        cross_append_ith_of_n_encodings(acc, i, n_initial_acc_encodings, enc);
+        cross_append_ith_of_n_encodings_with_encodings(acc, i, n_initial_acc_encodings, enc);
     }
 }

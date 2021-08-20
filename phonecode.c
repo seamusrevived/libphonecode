@@ -1,5 +1,6 @@
 #include <string.h>
 #include <malloc.h>
+#include <stdbool.h>
 #include "phonecode.h"
 
 
@@ -50,10 +51,10 @@ char get_encoded_digit(char c) {
     }
 }
 
-int number_matches_encoding(const char *number, const char *word) {
+bool number_matches_encoding(const char *number, const char *word) {
     char *encoding = strdup(word);
 
-    for (unsigned int i = 0; i < strlen(word); i++) {
+    for (size_t i = 0; i < strlen(word); i++) {
         encoding[i] = get_encoded_digit(word[i]);
     }
 
@@ -71,56 +72,63 @@ find_words_matching_number_in_dictionary(const char *phone_number_sequence, cons
     return found_words;
 }
 
-void process_subsequence(struct phone_encodings_t *total, const char *phone_number, const struct dict_t *dictionary) {
-    if (strlen(phone_number) == 0) {
+char *create_substring(const char *string, int offset, unsigned int length) {
+    char *substring = malloc(sizeof(char) * (length + 1));
+    strncpy(substring, &string[offset], length);
+    substring[length] = '\0';
+    return substring;
+}
+
+void build_encodings_for_sequence(struct phone_encodings_t *running_result, const char *phone_number,
+                                  const struct dict_t *dictionary) {
+    size_t phone_number_length = strlen(phone_number);
+
+    if (phone_number_length == 0) {
         return;
     }
 
-    unsigned int phone_number_length = strlen(phone_number);
-
-    struct phone_encodings_t *all_branch_encodings = new_phone_encodings();
+    struct phone_encodings_t *all_partitioning_results = new_phone_encodings();
 
     for (unsigned int i = 0; i < phone_number_length; i++) {
-        struct phone_encodings_t *this_branch = new_phone_encodings();
+        char *head_sequence = create_substring(phone_number, 0, i + 1);
+        char *tail_sequence = create_substring(phone_number, i + 1, phone_number_length - i - 1);
 
-        copy_phone_encodings(this_branch, total);
+        struct phone_encodings_t *partitioning_results = new_phone_encodings();
+        copy_phone_encodings(partitioning_results, running_result);
 
-        unsigned int head_length = i + 1;
-        char *phone_subsequence = malloc(sizeof(char) * (head_length + 1));
-        strncpy(phone_subsequence, phone_number, head_length);
-        phone_subsequence[head_length] = '\0';
-
-        unsigned int tail_length = phone_number_length - i - 1;
-        char *tail_sequence = malloc(sizeof(char) * (tail_length + 1));
-        strncpy(tail_sequence, &phone_number[i + 1], tail_length);
-        tail_sequence[tail_length] = '\0';
-
-        struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(phone_subsequence, dictionary);
+        struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(head_sequence, dictionary);
         if (found_words->length > 0) {
-            merge_encodings(this_branch, found_words);
-            process_subsequence(this_branch, tail_sequence, dictionary);
-            add_encodings(all_branch_encodings, this_branch);
+            cross_merge_encodings(partitioning_results, found_words);
+            build_encodings_for_sequence(partitioning_results, tail_sequence, dictionary);
+            add_encodings(all_partitioning_results, partitioning_results);
         }
 
+        free(head_sequence);
+        free(tail_sequence);
     }
-    copy_phone_encodings(total, all_branch_encodings);
+
+    copy_phone_encodings(running_result, all_partitioning_results);
 }
 
 struct phone_encodings_t *
 get_encodings_for_number_with_dictionary(const char *phone_number, const struct dict_t *dictionary) {
-    struct phone_encodings_t *total_result = new_phone_encodings();
+    struct phone_encodings_t *result = new_phone_encodings();
 
-    process_subsequence(total_result, phone_number, dictionary);
+    build_encodings_for_sequence(result, phone_number, dictionary);
 
-    return total_result;
+    return result;
+}
+
+bool is_valid_number(char i1) {
+    return '2' <= i1 && i1 <= '9';
 }
 
 char *get_sanitized_phone_number(const char *phone_number) {
     int length = 0;
     char *sanitized_phone_number = strdup(phone_number);
 
-    for (unsigned int i = 0; i < strlen(phone_number); i++) {
-        if ('2' <= phone_number[i] && phone_number[i] <= '9') {
+    for (size_t i = 0; i < strlen(phone_number); i++) {
+        if (is_valid_number(phone_number[i])) {
             sanitized_phone_number[length] = phone_number[i];
             length++;
         }

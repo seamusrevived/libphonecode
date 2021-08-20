@@ -2,7 +2,7 @@
 #define LIBPHONECODE_PHONE_ENCODINGS_H
 
 struct phone_encodings_t {
-    unsigned int length;
+    size_t length;
     char **encodings;
 };
 
@@ -16,7 +16,7 @@ void copy_phone_encodings(struct phone_encodings_t *, const struct phone_encodin
 
 void add_word_to_encodings(const char *, struct phone_encodings_t *);
 
-void merge_encodings(struct phone_encodings_t *, const struct phone_encodings_t *);
+void cross_merge_encodings(struct phone_encodings_t *acc, const struct phone_encodings_t *enc);
 
 void add_encodings(struct phone_encodings_t *, const struct phone_encodings_t *);
 
