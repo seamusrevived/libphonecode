@@ -1,5 +1,6 @@
 #include <string.h>
 #include <malloc.h>
+#include <regex.h>
 #include "phonecode.h"
 
 
@@ -92,7 +93,7 @@ void process_subsequence(struct phone_encodings_t *total, const char *phone_numb
 
         unsigned int tail_length = phone_number_length - i - 1;
         char *tail_sequence = malloc(sizeof(char) * (tail_length + 1));
-        strncpy(tail_sequence, &phone_number[i+1], tail_length);
+        strncpy(tail_sequence, &phone_number[i + 1], tail_length);
         tail_sequence[tail_length] = '\0';
 
         struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(phone_subsequence, dictionary);
@@ -115,13 +116,40 @@ get_encodings_for_number_with_dictionary(const char *phone_number, const struct 
     return total_result;
 }
 
+char *get_sanitized_phone_number(const char *phone_number) {
+    regex_t regex;
+    regcomp(&regex, "[2-9]", 0);
+    regmatch_t matches[1];
+
+    int sanitized_length = 0;
+    char *sanitized_phone_number = strdup(phone_number);
+
+    char const *remaining_phone_number = phone_number;
+
+    int result = regexec(&regex, remaining_phone_number, 1, matches, 0);
+    while(result != REG_NOMATCH && matches[0].rm_so != -1) {
+        sanitized_phone_number[sanitized_length] = remaining_phone_number[matches[0].rm_so];
+        sanitized_length++;
+        remaining_phone_number = &remaining_phone_number[matches[0].rm_eo];
+        result = regexec(&regex, remaining_phone_number, 1, matches, 0);
+    }
+    sanitized_phone_number[sanitized_length] = '\0';
+
+    return sanitized_phone_number;
+}
+
 void find_encodings(const char *phone_number,
                     const struct dict_t *dictionary,
                     struct phone_encodings_t *output_encodings
 ) {
-    struct phone_encodings_t *found_mapping = get_encodings_for_number_with_dictionary(phone_number, dictionary);
+    char *sanitized_phone_number = get_sanitized_phone_number(phone_number);
+
+    struct phone_encodings_t *found_mapping =
+            get_encodings_for_number_with_dictionary(sanitized_phone_number, dictionary);
+
     raw_copy_phone_encodings(output_encodings, found_mapping);
     delete_phone_encodings(found_mapping);
+    free(sanitized_phone_number);
 }
 
 

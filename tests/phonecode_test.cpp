@@ -301,3 +301,21 @@ TEST(libphonecode, phone_number_2323_with_word_ad_has_one_match_ad_ad) {
     EXPECT_EQ(1, output.length);
     EXPECT_STREQ("ad ad", output.encodings[0]);
 }
+
+TEST(libphonecode, phone_number_23_withgarbage_with_word_ad_has_one_match_ad) {
+    const char *words[] = {"ad"};
+    struct dict_t dict{
+        .size = 1,
+        .words = words
+    };
+
+    struct phone_encodings_t output{
+        .length = MAX_OUTPUT_LENGTH,
+        .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+    };
+
+    find_encodings("-(23) (#*()@", &dict, &output);
+
+    EXPECT_EQ(1, output.length);
+    EXPECT_STREQ("ad", output.encodings[0]);
+}
