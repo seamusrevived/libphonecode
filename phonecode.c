@@ -3,58 +3,58 @@
 #include "phonecode.h"
 
 
-int number_matches_encoding(const char *number, const char *word) {
-    size_t len = strlen(word);
-    char *encoding = malloc(sizeof(char) * (len + 1));
-    encoding[len] = '\0';
+char get_encoded_digit(char c) {
+    switch (c) {
+        case 'a':
+        case 'b':
+        case 'c':
+            return '2';
+        case 'd':
+        case 'e':
+        case 'f':
+            return '3';
 
-    for (unsigned int i = 0; i < len; i++) {
-        char encoded_digit = '\0';
-        switch (word[i]) {
-            case 'a':
-            case 'b':
-            case 'c':
-                encoded_digit = '2';
-                break;
-            case 'd':
-            case 'e':
-            case 'f':
-                encoded_digit = '3';
-                break;
-            case 'g':
-            case 'h':
-            case 'i':
-                encoded_digit = '4';
-                break;
-            case 'j':
-            case 'k':
-            case 'l':
-                encoded_digit = '5';
-                break;
-            case 'm':
-            case 'n':
-            case 'o':
-                encoded_digit = '6';
-                break;
-            case 'p':
-            case 'q':
-            case 'r':
-            case 's':
-                encoded_digit = '7';
-                break;
-            case 't':
-            case 'u':
-            case 'v':
-                encoded_digit = '8';
-                break;
-            case 'w':
-            case 'x':
-            case 'y':
-            case 'z':
-                encoded_digit = '9';
-                break;
-        }
-        encoding[i] = encoded_digit;
+        case 'g':
+        case 'h':
+        case 'i':
+            return '4';
+
+        case 'j':
+        case 'k':
+        case 'l':
+            return '5';
+
+        case 'm':
+        case 'n':
+        case 'o':
+            return '6';
+
+        case 'p':
+        case 'q':
+        case 'r':
+        case 's':
+            return '7';
+
+        case 't':
+        case 'u':
+        case 'v':
+            return '8';
+
+        case 'w':
+        case 'x':
+        case 'y':
+        case 'z':
+            return '9';
+        default:
+            return '\0';
+    }
+}
+
+int number_matches_encoding(const char *number, const char *word) {
+    char *encoding = strdup(word);
+
+    for (unsigned int i = 0; i < strlen(word); i++) {
+        encoding[i] = get_encoded_digit(word[i]);
     }
 
     return strcmp(number, encoding) == 0;
@@ -119,8 +119,8 @@ char *get_sanitized_phone_number(const char *phone_number) {
     int length = 0;
     char *sanitized_phone_number = strdup(phone_number);
 
-    for(unsigned int i = 0; i < strlen(phone_number); i++){
-        if('2' <= phone_number[i] && phone_number[i] <= '9') {
+    for (unsigned int i = 0; i < strlen(phone_number); i++) {
+        if ('2' <= phone_number[i] && phone_number[i] <= '9') {
             sanitized_phone_number[length] = phone_number[i];
             length++;
         }
