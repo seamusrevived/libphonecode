@@ -1,11 +1,12 @@
 #include <string.h>
 #include <malloc.h>
 #include <stdbool.h>
+#include <ctype.h>
 #include "phonecode.h"
 
 
 char get_encoded_digit(char c) {
-    switch (c) {
+    switch (tolower(c)) {
         case 'a':
         case 'b':
         case 'c':

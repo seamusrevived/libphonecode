@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     int n_phone_numbers = 4;
     const char *phone_numbers[] = {"(435) 569-6753", "(967) 534-3556", "222", "232"};
 
-    const char *words[] = {"hello", "world", "a", "b", "ab", "ba", "aba"};
+    const char *words[] = {"Hello", "world", "a", "b", "ab", "ba", "aba"};
     struct dict_t dict = {
             .size = 7,
             .words = words

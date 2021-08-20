@@ -199,3 +199,13 @@ TEST(libphonecode, phone_number_23_withgarbage_with_word_ad_has_one_match_ad) {
     EXPECT_EQ(1, output->size);
     EXPECT_STREQ("ad", output->encodings[0]);
 }
+TEST(libphonecode, phone_number_2_with_word_A_has_one_match_A) {
+    const char *words[] = {"A"};
+    auto dict = initialize_dictionary(1, words);
+    auto output = initialize_phone_encodings();
+
+    find_encodings("2", dict, output);
+
+    EXPECT_EQ(1, output->size);
+    EXPECT_STREQ("A", output->encodings[0]);
+}
