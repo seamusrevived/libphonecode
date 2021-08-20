@@ -5,7 +5,9 @@ Library to find dial-pad words in phone numbers in the spirit of Prechelt's "pho
 [*An empirical comparison of C, C++, Java, Perl, Python, Rexx, and Tcl for a search/string-processing program*
 ](http://page.mi.fu-berlin.de/prechelt/Biblio/jccpprtTR.pdf)
 
-This implementation deliberately did not use existing data structure libraries, such as `gnulib` or `glib`
+This implementation deliberately did not use existing data structure libraries, such as `gnulib` or `glib`.
+
+The provided example program throws no issues with valgrind.
 
 ## Use
 

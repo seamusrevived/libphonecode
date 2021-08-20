@@ -155,7 +155,7 @@ void __join_strings(char **dst, const char *string) {
     unsigned int dst_len = strlen(*dst);
     unsigned int src_len = strlen(string);
 
-    char *joined_string = malloc(sizeof(char) * (dst_len + src_len + 1));
+    char *joined_string = malloc(sizeof(char) * (dst_len + src_len + 2));
     joined_string[0] = '\0';
     if (dst_len > 0) {
         strcpy(joined_string, *dst);
