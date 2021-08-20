@@ -27,8 +27,7 @@ void find_encodings(
 }
 
 
-string_collection_t *
-__get_encodings_for_number_with_dictionary(
+string_collection_t *__get_encodings_for_number_with_dictionary(
         const char *phone_number,
         const dict_t *dictionary
 ) {
@@ -39,8 +38,7 @@ __get_encodings_for_number_with_dictionary(
     return result;
 }
 
-void
-__build_encodings_for_sequence(
+void __build_encodings_for_sequence(
         string_collection_t *running_result,
         const char *phone_number,
         const dict_t *dictionary
@@ -74,8 +72,7 @@ __build_encodings_for_sequence(
     copy_string_collection(running_result, all_partitioning_results);
 }
 
-string_collection_t *
-__find_words_matching_number_in_dictionary(
+string_collection_t *__find_words_matching_number_in_dictionary(
         const char *phone_number_sequence,
         const dict_t *dictionary
 ) {
@@ -88,11 +85,7 @@ __find_words_matching_number_in_dictionary(
     return found_words;
 }
 
-bool
-__number_matches_encoding(
-        const char *number,
-        const char *word
-) {
+bool __number_matches_encoding(const char *number, const char *word) {
     char *encoding = strdup(word);
 
     for (size_t i = 0; i < strlen(word); i++) {

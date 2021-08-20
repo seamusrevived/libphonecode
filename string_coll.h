@@ -16,7 +16,7 @@ void raw_copy_string_collection(string_collection_t *dst, const string_collectio
 
 void copy_string_collection(string_collection_t *dst, const string_collection_t *src);
 
-void resize_string_collection(string_collection_t *dst, unsigned int new_size);
+void resize_string_collection(string_collection_t *dst, size_t new_size);
 
 void concat_string_collections(string_collection_t *dst, const string_collection_t *src);
 
