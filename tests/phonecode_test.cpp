@@ -8,7 +8,7 @@ extern "C" {
 
 TEST(libphonecode, empty_phone_number_no_dictionary_returns_0_results) {
     auto dict = initialize_dictionary(0, {});
-    auto output = initialize_phone_encodings();
+    auto * output = initialize_phone_encodings();
 
     find_encodings("", dict, output);
 

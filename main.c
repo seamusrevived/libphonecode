@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
     const char *phone_numbers[] = {"(435) 569-6753", "(967) 534-3556", "222", "232"};
 
     const char *words[] = {"Hello", "world", "a", "b", "ab", "ba", "aba"};
-    struct dict_t dict = {
+    dict_t dict = {
             .size = 7,
-            .words = words
+            .strings = words
     };
 
-    struct string_collection_t output = {
+    string_collection_t output = {
             .size = MAX_OUTPUT_LENGTH,
             .strings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };

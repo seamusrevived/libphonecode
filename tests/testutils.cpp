@@ -15,17 +15,17 @@ char **initialize_strings_buffer(size_t max_output_length, size_t max_string_len
     return output;
 }
 
-struct string_collection_t *initialize_phone_encodings() {
-    auto encodings = (struct string_collection_t*) malloc(sizeof(struct string_collection_t));
-    encodings->size = 0;
-    encodings->strings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH);
-    return encodings;
+string_collection_t *initialize_phone_encodings() {
+    auto coll = (string_collection_t*) malloc(sizeof(string_collection_t));
+    coll->size = 0;
+    coll->strings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH);
+    return coll;
 }
 
-struct dict_t *initialize_dictionary(size_t size, const char **words) {
-    auto dictionary = (dict_t *) malloc(sizeof(struct dict_t));
+dict_t * initialize_dictionary(size_t size, const char **words) {
+    auto dictionary = (dict_t *) malloc(sizeof(dict_t));
     dictionary->size = size;
-    dictionary->words = words;
+    dictionary->strings = words;
 
     return dictionary;
 }
