@@ -27,16 +27,16 @@ int main(int argc, char **argv) {
             .words = words
     };
 
-    struct phone_encodings_t output = {
+    struct string_collection_t output = {
             .size = MAX_OUTPUT_LENGTH,
-            .encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
+            .strings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH)
     };
 
     for (int i = 0; i < n_phone_numbers; i++) {
         printf("Phone Number: %s\n", phone_numbers[i]);
         find_encodings(phone_numbers[i], &dict, &output);
         for (size_t j = 0; j < output.size; j++) {
-            printf("\t%s\n", output.encodings[j]);
+            printf("\t%s\n", output.strings[j]);
         }
     }
 

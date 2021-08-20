@@ -5,7 +5,7 @@ set(CMAKE_C_STANDARD 99)
 
 add_subdirectory(tests)
 
-add_library(libphonecode phonecode.c phonecode.h phone_encodings.c phone_encodings.h)
+add_library(libphonecode phonecode.c phonecode.h string_coll.c string_coll.h)
 target_link_libraries(libphonecode)
 
 

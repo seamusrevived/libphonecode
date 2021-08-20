@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cstring>
 #include "phonecode.h"
-#include "phone_encodings.h"
+#include "string_coll.h"
 
 const int MAX_OUTPUT_LENGTH = 1028;
 const int MAX_STRING_LENGTH = 256;
@@ -15,10 +15,10 @@ char **initialize_strings_buffer(size_t max_output_length, size_t max_string_len
     return output;
 }
 
-struct phone_encodings_t *initialize_phone_encodings() {
-    auto encodings = (struct phone_encodings_t*) malloc(sizeof(struct phone_encodings_t));
+struct string_collection_t *initialize_phone_encodings() {
+    auto encodings = (struct string_collection_t*) malloc(sizeof(struct string_collection_t));
     encodings->size = 0;
-    encodings->encodings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH);
+    encodings->strings = initialize_strings_buffer(MAX_OUTPUT_LENGTH, MAX_STRING_LENGTH);
     return encodings;
 }
 

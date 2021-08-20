@@ -52,7 +52,11 @@ char get_encoded_digit(char c) {
     }
 }
 
-bool number_matches_encoding(const char *number, const char *word) {
+bool
+number_matches_encoding(
+        const char *number,
+        const char *word
+) {
     char *encoding = strdup(word);
 
     for (size_t i = 0; i < strlen(word); i++) {
@@ -62,65 +66,79 @@ bool number_matches_encoding(const char *number, const char *word) {
     return strcmp(number, encoding) == 0;
 }
 
-struct phone_encodings_t *
-find_words_matching_number_in_dictionary(const char *phone_number_sequence, const struct dict_t *dictionary) {
-    struct phone_encodings_t *found_words = new_phone_encodings();
+struct string_collection_t *
+find_words_matching_number_in_dictionary(
+        const char *phone_number_sequence,
+        const struct dict_t *dictionary
+) {
+    struct string_collection_t *found_words = new_string_collection();
     for (unsigned int j = 0; j < dictionary->size; j++) {
         if (number_matches_encoding(phone_number_sequence, dictionary->words[j])) {
-            add_word_to_encodings(dictionary->words[j], found_words);
+            add_string_to_string_collection(dictionary->words[j], found_words);
         }
     }
     return found_words;
 }
 
-char *create_substring(const char *string, size_t offset, size_t length) {
+char *
+create_substring(
+        const char *string,
+        size_t offset, size_t length
+) {
     char *substring = malloc(sizeof(char) * (length + 1));
     strncpy(substring, &string[offset], length);
     substring[length] = '\0';
     return substring;
 }
 
-void build_encodings_for_sequence(struct phone_encodings_t *running_result, const char *phone_number,
-                                  const struct dict_t *dictionary) {
+void
+build_encodings_for_sequence(
+        struct string_collection_t *running_result,
+        const char *phone_number,
+        const struct dict_t *dictionary
+) {
     size_t phone_number_length = strlen(phone_number);
 
     if (phone_number_length == 0) {
         return;
     }
 
-    struct phone_encodings_t *all_partitioning_results = new_phone_encodings();
+    struct string_collection_t *all_partitioning_results = new_string_collection();
 
     for (size_t i = 0; i < phone_number_length; i++) {
         char *head_sequence = create_substring(phone_number, 0, i + 1);
         char *tail_sequence = create_substring(phone_number, i + 1, phone_number_length - i - 1);
 
-        struct phone_encodings_t *partitioning_results = new_phone_encodings();
-        copy_phone_encodings(partitioning_results, running_result);
+        struct string_collection_t *partitioning_results = new_string_collection();
+        copy_string_collection(partitioning_results, running_result);
 
-        struct phone_encodings_t *found_words = find_words_matching_number_in_dictionary(head_sequence, dictionary);
+        struct string_collection_t *found_words = find_words_matching_number_in_dictionary(head_sequence, dictionary);
         if (found_words->size > 0) {
-            cross_merge_encodings(partitioning_results, found_words);
+            cross_merge_strings(partitioning_results, found_words);
             build_encodings_for_sequence(partitioning_results, tail_sequence, dictionary);
-            add_encodings(all_partitioning_results, partitioning_results);
+            concat_string_collections(all_partitioning_results, partitioning_results);
         }
 
         free(head_sequence);
         free(tail_sequence);
     }
 
-    copy_phone_encodings(running_result, all_partitioning_results);
+    copy_string_collection(running_result, all_partitioning_results);
 }
 
-struct phone_encodings_t *
-get_encodings_for_number_with_dictionary(const char *phone_number, const struct dict_t *dictionary) {
-    struct phone_encodings_t *result = new_phone_encodings();
+struct string_collection_t *
+get_encodings_for_number_with_dictionary(
+        const char *phone_number,
+        const struct dict_t *dictionary
+) {
+    struct string_collection_t *result = new_string_collection();
 
     build_encodings_for_sequence(result, phone_number, dictionary);
 
     return result;
 }
 
-bool is_valid_number(char i1) {
+bool is_valid_dial_pad_number(char i1) {
     return '2' <= i1 && i1 <= '9';
 }
 
@@ -129,7 +147,7 @@ char *get_sanitized_phone_number(const char *phone_number) {
     char *sanitized_phone_number = strdup(phone_number);
 
     for (size_t i = 0; i < strlen(phone_number); i++) {
-        if (is_valid_number(phone_number[i])) {
+        if (is_valid_dial_pad_number(phone_number[i])) {
             sanitized_phone_number[length] = phone_number[i];
             length++;
         }
@@ -139,17 +157,18 @@ char *get_sanitized_phone_number(const char *phone_number) {
     return sanitized_phone_number;
 }
 
-void find_encodings(const char *phone_number,
-                    const struct dict_t *dictionary,
-                    struct phone_encodings_t *output_encodings
+void find_encodings(
+        const char *phone_number,
+        const struct dict_t *dictionary,
+        struct string_collection_t *output_encodings
 ) {
     char *sanitized_phone_number = get_sanitized_phone_number(phone_number);
 
-    struct phone_encodings_t *found_mapping =
+    struct string_collection_t *found_mapping =
             get_encodings_for_number_with_dictionary(sanitized_phone_number, dictionary);
 
-    raw_copy_phone_encodings(output_encodings, found_mapping);
-    delete_phone_encodings(found_mapping);
+    raw_copy_string_collection(output_encodings, found_mapping);
+    delete_string_collection(found_mapping);
     free(sanitized_phone_number);
 }
 

@@ -2,7 +2,7 @@
 #define LIBPHONECODE_PHONECODE_H
 
 
-#include "phone_encodings.h"
+#include "string_coll.h"
 
 struct dict_t {
     unsigned int size;
@@ -11,7 +11,7 @@ struct dict_t {
 
 
 
-void find_encodings(const char *phone_number, const struct dict_t *dictionary, struct phone_encodings_t *output_encodings);
+void find_encodings(const char *phone_number, const struct dict_t *dictionary, struct string_collection_t *output_encodings);
 
 
 #endif //LIBPHONECODE_PHONECODE_H
