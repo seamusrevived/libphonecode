@@ -13,8 +13,7 @@ void __join_strings(char **, const char *);
 
 
 string_collection_t *new_string_collection() {
-    string_collection_t *coll = malloc(sizeof(string_collection_t));
-    coll->size = 0;
+    string_collection_t *coll = calloc(1, sizeof(string_collection_t));
     return coll;
 }
 
@@ -65,11 +64,10 @@ void __grow_string_collection(
         size_t new_size
 ) {
     char **old_strings = coll->strings;
-    coll->strings = malloc(sizeof(char *) * new_size);
+    coll->strings = calloc(new_size, sizeof(char *));
     memcpy(coll->strings, old_strings, sizeof(char *) * coll->size);
     for (unsigned int i = coll->size; i < new_size; i++) {
-        coll->strings[i] = malloc(sizeof(char));
-        coll->strings[i][0] = '\0';
+        coll->strings[i] = calloc(1, sizeof(char));
     }
     if (coll->size > 0) {
         free(old_strings);
@@ -163,7 +161,7 @@ void __join_strings(char **dst, const char *string) {
         return;
     }
 
-    char *joined_string = malloc(sizeof(char) * (dst_len + src_len + 2));
+    char *joined_string = calloc(dst_len + src_len + 2, sizeof(char));
     strcpy(joined_string, *dst);
     strcat(joined_string, " ");
     strcat(joined_string, string);
